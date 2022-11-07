@@ -65,7 +65,8 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  const createCartItemElement = ({ id, title, price }) => {
    const li = document.createElement('li');
    li.className = 'cart__item';
-   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;li.addEventListener('click', () => {
+   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
+   li.addEventListener('click', () => {
     li.remove();
   });
   return li;
@@ -116,8 +117,8 @@ window.onload = async () => {
 
   if (localholder.length > 0) {
     const clientList = JSON.parse(getSavedcartStorage());
-    clientList.forEach((list) => {
-      clientCart(list);
+    clientList.forEach((unit) => {
+      clientCart(unit);
     });
   }
 };

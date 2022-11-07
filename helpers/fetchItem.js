@@ -12,4 +12,3 @@ if (typeof module !== 'undefined') {
     fetchItem,
   };
 }
-

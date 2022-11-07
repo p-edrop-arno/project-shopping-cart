@@ -87,8 +87,6 @@ clearCart.addEventListener('click', () => {
  * @returns {string} ID do produto.
  */
 
-
-
 const clientItem = document.querySelector('.items');
 const newList = async () => {
   const items = await fetchProducts();

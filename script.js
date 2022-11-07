@@ -35,21 +35,6 @@ const createCustomElement = (element, className, innerText) => {
  * @param {string} product.thumbnail - URL da imagem do produto.
  * @returns {Element} Elemento de produto.
  */
-const createProductItemElement = ({ id, title, thumbnail }) => {
-  const section = document.createElement('section');
-  section.className = 'item';
-  section.appendChild(createCustomElement('span', 'item_id', id));
-  section.appendChild(createCustomElement('span', 'item__title', title));
-  section.appendChild(createProductImageElement(thumbnail));
-  section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
-  return section;
-};
-/**
- * Função que recupera o ID do produto passado como parâmetro.
- * @param {Element} product - Elemento do produto.
- * @returns {string} ID do produto.
- */
-const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
 /**
  * Função responsável por criar e retornar um item do carrinho.
  * @param {Object} product - Objeto do produto.
@@ -58,6 +43,13 @@ const getIdFromProductItem = (product) => product.querySelector('span.id').inner
  * @param {string} product.price - Preço do produto.
  * @returns {Element} Elemento de um item do carrinho.
  */
+
+const cartItems = document.querySelector('.cart__items');
+
+const cartItemClickListener = (event) => {
+  cartItems.removeChild(event.target);
+};
+
 const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
@@ -66,12 +58,43 @@ const createCartItemElement = ({ id, title, price }) => {
   return li;
 };
 
+const cartProductInfo = async (id) => {
+  const element = await fetchItem(id);
+  cartItems.appendChild(createCartItemElement(element));
+};
+const createProductItemElement = ({ id, title, thumbnail }) => {
+  const section = document.createElement('section');
+  section.className = 'item';
+  section.appendChild(createCustomElement('span', 'item_id', id));
+  section.appendChild(createCustomElement('span', 'item__title', title));
+  section.appendChild(createProductImageElement(thumbnail));
+  const cartButton = createCustomElement('button', 'item__add', 'Adicionar ao carrinho!');
+  cartButton.addEventListener('click', () => cartProductInfo(id));
+  section.appendChild(cartButton);
+  return section;
+};
+/**
+ * Função que limpa o carrinho
+ */
+const clearCart = document.querySelector('.empty-cart');
+clearCart.addEventListener('click', () => {
+  cartItems.innerHTML = '';
+});
+
+/**
+ * Função que recupera o ID do produto passado como parâmetro.
+ * @param {Element} product - Elemento do produto.
+ * @returns {string} ID do produto.
+ */
+
+
+
 const clientItem = document.querySelector('.items');
-const newList = async () => { 
+const newList = async () => {
   const items = await fetchProducts();
   items.results.forEach((item) => {
     clientItem.appendChild(createProductItemElement(item));
- });
+  });
 };
 
 window.onload = async () => {

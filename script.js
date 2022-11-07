@@ -13,7 +13,19 @@ const createProductImageElement = (imageSource) => {
   img.className = 'item__image';
   img.src = imageSource;
   return img;
-};
+  };
+
+  const totalPrice = document.querySelector('.total-price');
+
+  const finalPrice = () => {
+    const cartProducts = document.querySelectorAll('.cart__item');
+    let sum = 0;
+    cartProducts.forEach((product) => { 
+      sum += product.price; 
+    });
+    totalPrice.innerText = sum;
+  };
+
 /**
  * Função responsável por criar e retornar qualquer elemento.
  * @param {string} element - Nome do elemento a ser criado.
@@ -44,15 +56,18 @@ const createCustomElement = (element, className, innerText) => {
  * @returns {Element} Elemento de um item do carrinho.
  */
 
+ const secItems = document.querySelector('.items');
 const cartItems = document.querySelector('.cart__items');
 
 const cartItemClickListener = (event) => {
   cartItems.removeChild(event.target);
+  finalPrice();
 };
 
 const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
+  li.price = price;
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
   li.addEventListener('click', cartItemClickListener);
   return li;
@@ -61,7 +76,9 @@ const createCartItemElement = ({ id, title, price }) => {
 const cartProductInfo = async (id) => {
   const element = await fetchItem(id);
   cartItems.appendChild(createCartItemElement(element));
+  finalPrice();
 };
+
 const createProductItemElement = ({ id, title, thumbnail }) => {
   const section = document.createElement('section');
   section.className = 'item';
@@ -73,12 +90,11 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
   section.appendChild(cartButton);
   return section;
 };
-/**
- * Função que limpa o carrinho
- */
+
 const clearCart = document.querySelector('.empty-cart');
 clearCart.addEventListener('click', () => {
   cartItems.innerHTML = '';
+  finalPrice();
 });
 
 /**
@@ -87,14 +103,29 @@ clearCart.addEventListener('click', () => {
  * @returns {string} ID do produto.
  */
 
-const clientItem = document.querySelector('.items');
-const newList = async () => {
-  const items = await fetchProducts();
-  items.results.forEach((item) => {
-    clientItem.appendChild(createProductItemElement(item));
-  });
+ const addMessage = () => {
+  const message = document.createElement('div');
+  message.className = 'loading';
+  message.innerText = 'carregando...';
+  secItems.appendChild(message);
 };
 
+const deleteMessage = () => {
+  const message = document.querySelector('.loading');
+  secItems.removeChild(message);
+};
+
+const creatingList = async () => { 
+  const products = await fetchProducts();
+  products.results.forEach((product) => {
+    secItems.appendChild(createProductItemElement(product));
+ });
+ deleteMessage();
+};
+
+addMessage();
+
 window.onload = async () => {
-  await newList();
+  await creatingList();
+  finalPrice();
 };

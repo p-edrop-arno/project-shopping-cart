@@ -5,11 +5,11 @@ const fetchItem = async (id) => {
     return result;
   } catch (error) {
     return error;
-  };
+  }
+}
 
-  if (typeof module !== 'undefined') {
+if (typeof module !== 'undefined') {
     module.exports = {
       fetchItem,
     };
-  }
 }
